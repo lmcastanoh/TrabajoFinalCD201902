@@ -1,0 +1,139 @@
+---
+title: "Trabajo_final"
+author: "Equipo ciencia de los datos"
+date: "13/10/2019"
+output: html_document
+---
+
+##LIMPIEZA DE DATOS BASE DE DATOS DE ACCIDENTALIDAD
+
+
+Se leen las bases de datos:
+
+```{r}
+accidentalidad <- read.csv("ACCIDENTALIDAD_GEO_V4.csv", header = TRUE,sep=";",dec=",")
+
+```
+
+Se cambia el formato de la variable "FECHA" para "accidentalidad" y de "fecha_completa" para "festivos":
+
+```{r}
+accidentalidad$FECHA_CORREGIDA <- substr (accidentalidad$FECHA,1,10)
+accidentalidad$FECHA_CORREGIDA <- as.Date (accidentalidad$FECHA_CORREGIDA,format = "%Y-%m-%d")
+
+```
+
+Se crea un vector con el día de la semana para catalogar los sábados y domingos como días no hábiles. La primera línea de código se usa para cambiar el idioma de los resultados a inglés
+
+```{r}
+
+
+primer_fecha<-min(accidentalidad$FECHA_CORREGIDA)
+ultima_fecha<-max(accidentalidad$FECHA_CORREGIDA)
+N_FECHAS<-seq(primer_fecha,ultima_fecha,by=1)
+N_DIA_SEMANA<-weekdays(N_FECHAS)
+N_DIA_LABORAL<-ifelse(N_DIA_SEMANA %in% c("sábado","domingo"), "Fin de semana", "Laboral")
+
+```
+
+Se crea un dataframe con los vectores de las fechas y los días laborales
+
+```{r}
+N_MAESTRO_FECHAS<-data.frame(N_FECHAS,N_DIA_SEMANA,N_DIA_LABORAL)
+
+
+```
+
+Se carga una base de datos con los días festivos en Colombia, se cambia a formato "Date", se completa el código para catalogar los días en festivos y se actualiza el maestro de fechas
+
+```{r}
+dias_festivos_colombia<-read.csv("festivoscolombia.csv", header=TRUE, sep=";")
+dias_festivos_colombia$fecha_completa<-as.Date(dias_festivos_colombia$fecha_completa)
+N_DIA_LABORAL<-ifelse(N_DIA_SEMANA %in% c("sábado","domingo"), "Fin de semana", ifelse(N_FECHAS %in% dias_festivos_colombia$fecha_completa,"Festivo","Laboral"))
+N_MAESTRO_FECHAS<-data.frame(N_FECHAS,N_DIA_SEMANA,N_DIA_LABORAL)
+```
+
+Se crea un nuevo dataframe uniendo los dataframes de accidentalidad y maestro de fechas
+
+```{r}
+
+accidentalidad_enriquecida<-data.frame(merge(accidentalidad,N_MAESTRO_FECHAS,by.x = "FECHA_CORREGIDA", by.y = "N_FECHAS"))
+
+```
+
+Se lee la base de datos de eventos importantes y se hace un merge con la base de datos principal:
+
+```{r}
+fechas_eventos<- read.csv("fechas_eventos_medellin.csv", header = TRUE, sep = ";")
+fechas_eventos$MES.DIA <- as.Date (fechas_eventos$MES.DIA,format = "%d/%m/%Y")
+fechas_eventos$MES.DIA <- as.Date (fechas_eventos$MES.DIA,format = "%Y-%m-%d")
+accidentalidad_enriquecida <- data.frame(merge(accidentalidad_enriquecida,fechas_eventos,by.x = "FECHA_CORREGIDA", by.y = "MES.DIA", all.x = TRUE))
+
+```
+
+
+
+# Crear variables MES_NOMBRE
+
+Se crea un campo nuevo que indica el nombre del mes:
+
+```{r}
+accidentalidad_enriquecida$MES_NOMBRE <- as.POSIXct(accidentalidad_enriquecida$FECHA_CORREGIDA)
+
+accidentalidad_enriquecida$MES_NOMBRE <- format(accidentalidad_enriquecida$FECHA_CORR, "%B") 
+
+class(accidentalidad_enriquecida$FECHA_CORREGIDA)
+```
+
+Se ordenan los niveles del factor para mes y día para su uso en gráficos:
+
+```{r}
+accidentalidad_enriquecida$MES_NOMBRE <- as.factor(accidentalidad_enriquecida$MES_NOMBRE)
+
+accidentalidad_enriquecida$MES_NOMBRE <- ordered(accidentalidad_enriquecida$MES_NOMBRE, 
+                                      levels = c("enero", "febrero", "marzo", 
+                                                 "abril", "mayo", "junio", "julio",
+                                                 "agosto", "septiembre", "octubre",
+                                                 "noviembre", "diciembre"))
+
+accidentalidad_enriquecida$N_DIA_SEMANA <- as.factor(accidentalidad_enriquecida$N_DIA_SEMANA)
+accidentalidad_enriquecida$N_DIA_SEMANA <- ordered(accidentalidad_enriquecida$N_DIA_SEMANA, 
+                            levels = c("lunes","martes","miércoles","jueves","viernes",
+                                       "sábado","domingo"))
+
+
+
+```
+
+Se limpia la información de la hora pico para que sea solo en semana.
+
+```{r}
+accidentalidad_enriquecida$TIPO_HORA2<-ifelse(accidentalidad_enriquecida$N_DIA_LABORAL %in% c("Festivo","Fin de semana"),"HORA VALLE",accidentalidad_enriquecida$TIPO_HORA)
+```
+
+Se crea un vector con las columnas que no serán utilizadas en el análisis y se crea una nueva base de datos sin estas.
+
+```{r}
+variables_rm <- c("X", "Y", "RADICADO", "DIRECCION_ENC", "CBML", "MES_NOMBRE", "COMUNA",
+                  "JORNADA2","JORNADA","TIPO_HORA")
+
+data2<-accidentalidad_enriquecida
+
+data2 <- accidentalidad_enriquecida[, !(colnames(data2) %in% variables_rm), drop = FALSE]
+
+
+```
+se renombra la columna TIPO_HORA2
+
+```{r}
+colnames(data2)[colnames(data2)=="TIPO_HORA2"] <- "TIPO_HORA"
+```
+
+Se crea un csv con la base de datos "data2" y se le da el nombre de "accidentalidad_enriquecida2.csv":
+
+```{r}
+write.csv(data2, "accidentalidad_enriquecida2.csv", row.names = FALSE)
+```
+
+
+
