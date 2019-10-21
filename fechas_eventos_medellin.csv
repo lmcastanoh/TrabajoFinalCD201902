@@ -1,0 +1,220 @@
+MES/DIA;Fechas importantes;Festivo
+01/01/2014;Año nuevo;SI
+06/01/2014;Reyes;SI
+08/03/2014;Día de la mujer;NO
+19/03/2014;Día del hombre;NO
+17/04/2014;Jueves Santo;SI
+26/04/2014;Día del niño;NO
+01/05/2014;Día del trabajo;SI
+11/05/2014;Día de la madre;NO
+25/05/2014;Elecciones presidenciales;NO
+15/06/2014;Elecciones presidenciales segunda vuelta;NO
+22/06/2014;Día del padre;NO
+20/07/2014;Día de la independencia;SI
+01/08/2014;Feria de las flores;NO
+02/08/2014;Feria de las flores;NO
+03/08/2014;Feria de las flores;NO
+04/08/2014;Feria de las flores;NO
+05/08/2014;Feria de las flores;NO
+06/08/2014;Feria de las flores;NO
+07/08/2014;Feria de las flores - Batalla de Boyacá;SI
+08/08/2014;Feria de las flores;NO
+09/08/2014;Feria de las flores;NO
+10/08/2014;Feria de las flores;NO
+06/10/2014;Receso escolar;NO
+07/10/2014;Receso escolar;NO
+08/10/2014;Receso escolar;NO
+09/10/2014;Receso escolar;NO
+10/10/2014;Receso escolar;NO
+11/10/2014;Receso escolar;NO
+12/10/2014;Receso escolar;NO
+13/10/2014;Receso escolar;SI
+31/10/2014;Halloween;NO
+01/12/2014;Alborada;NO
+07/12/2014;Día de la virgen;NO
+08/12/2014;Día de la virgen;SI
+24/12/2014;Navidad;NO
+25/12/2014;Navidad;SI
+31/12/2014;Fin de año;NO
+01/01/2015;Año nuevo;SI
+12/01/2015;Reyes;SI
+08/03/2015;Día de la mujer;NO
+19/03/2015;Día del hombre;NO
+02/04/2015;Jueves Santo;SI
+03/04/2015;Viernes Santo;SI
+25/04/2015;Día del niño;NO
+01/05/2015;Día del trabajo;SI
+10/05/2015;Día de la madre;NO
+14/06/2015;Día del padre;NO
+20/07/2015;Día de la independencia;SI
+31/07/2015;Feria de las flores;NO
+01/08/2015;Feria de las flores;NO
+02/08/2015;Feria de las flores;NO
+03/08/2015;Feria de las flores;NO
+04/08/2015;Feria de las flores;NO
+05/08/2015;Feria de las flores;NO
+06/08/2015;Feria de las flores;NO
+07/08/2015;Feria de las flores - Batalla de Boyacá;SI
+08/08/2015;Feria de las flores;NO
+09/08/2015;Feria de las flores;NO
+05/10/2015;Receso escolar;NO
+06/10/2015;Receso escolar;NO
+07/10/2015;Receso escolar;NO
+08/10/2015;Receso escolar;NO
+09/10/2015;Receso escolar;NO
+10/10/2015;Receso escolar;NO
+11/10/2015;Receso escolar;NO
+12/10/2015;Receso escolar;SI
+31/10/2015;Halloween;NO
+01/12/2015;Alborada;NO
+07/12/2015;Día de la virgen;NO
+08/12/2015;Día de la virgen;SI
+24/12/2015;Navidad;NO
+25/12/2015;Navidad;SI
+31/12/2015;Fin de año;NO
+01/01/2016;Año nuevo;SI
+11/01/2016;Reyes;SI
+08/03/2016;Día de la mujer;NO
+20/03/2016;Día del hombre;NO
+24/03/2016;Jueves Santo;SI
+25/03/2016;Viernes Santo;SI
+25/04/2016;Día del niño;NO
+01/05/2016;Día del trabajo;SI
+08/05/2016;Día de la madre;NO
+19/06/2016;Día del padre;NO
+20/07/2016;Día de la independencia;SI
+29/07/2016;Feria de las flores;NO
+30/07/2016;Feria de las flores;NO
+31/07/2016;Feria de las flores;NO
+01/08/2016;Feria de las flores;NO
+02/08/2016;Feria de las flores;NO
+03/08/2016;Feria de las flores;NO
+04/08/2016;Feria de las flores;NO
+05/08/2016;Feria de las flores;NO
+06/08/2016;Feria de las flores;NO
+07/08/2016;Feria de las flores - Batalla de Boyacá;SI
+10/10/2016;Receso escolar;NO
+11/10/2016;Receso escolar;NO
+12/10/2016;Receso escolar;NO
+13/10/2016;Receso escolar;NO
+14/10/2016;Receso escolar;NO
+15/10/2016;Receso escolar;NO
+16/10/2016;Receso escolar;NO
+17/10/2016;Receso escolar;SI
+31/10/2016;Halloween;NO
+01/12/2016;Alborada;NO
+07/12/2016;Día de la virgen;NO
+08/12/2016;Día de la virgen;SI
+24/12/2016;Navidad;NO
+25/12/2016;Navidad;SI
+31/12/2016;Fin de año;NO
+01/01/2017;Año nuevo;SI
+09/01/2017;Reyes;SI
+08/03/2017;Día de la mujer;NO
+19/03/2017;Día del hombre;NO
+13/04/2017;Jueves Santo;SI
+14/04/2017;Viernes Santo;SI
+29/04/2017;Día del niño;NO
+01/05/2017;Día del trabajo;SI
+14/05/2017;Día de la madre;NO
+18/06/2017;Día del padre;NO
+20/07/2017;Día de la independencia;SI
+28/07/2017;Feria de las flores;NO
+29/07/2017;Feria de las flores;NO
+30/07/2017;Feria de las flores;NO
+31/07/2017;Feria de las flores;NO
+01/08/2017;Feria de las flores;NO
+02/08/2017;Feria de las flores;NO
+03/08/2017;Feria de las flores;NO
+04/08/2017;Feria de las flores;NO
+05/08/2017;Feria de las flores;NO
+06/08/2017;Feria de las flores ;NO
+07/08/2017;Batalla de Boyacá;SI
+09/10/2017;Receso escolar;NO
+10/10/2017;Receso escolar;NO
+11/10/2017;Receso escolar;NO
+12/10/2017;Receso escolar;NO
+13/10/2017;Receso escolar;NO
+14/10/2017;Receso escolar;NO
+15/10/2017;Receso escolar;NO
+16/10/2017;Receso escolar;SI
+31/10/2017;Halloween;NO
+01/12/2017;Alborada;NO
+07/12/2017;Día de la virgen;NO
+08/12/2017;Día de la virgen;SI
+24/12/2017;Navidad;NO
+25/12/2017;Navidad;SI
+31/12/2017;Fin de año;NO
+01/01/2018;Año nuevo;SI
+08/01/2018;Reyes;SI
+08/03/2018;Día de la mujer;NO
+18/03/2018;Día del hombre;NO
+29/03/2018;Jueves Santo;SI
+30/03/2018;Viernes Santo;SI
+28/04/2018;Día del niño;NO
+01/05/2018;Día del trabajo;SI
+13/05/2018;Día de la madre;NO
+27/05/2018;Elecciones presidenciales;NO
+17/06/2018;Elecciones presidenciales segunda vuelta;NO
+24/06/2018;Día del padre;NO
+20/07/2018;Día de la independencia;SI
+03/08/2018;Feria de las flores;NO
+04/08/2018;Feria de las flores;NO
+05/08/2018;Feria de las flores;NO
+06/08/2018;Feria de las flores;NO
+07/08/2018;Feria de las flores - Batalla de Boyacá;SI
+08/08/2018;Feria de las flores;NO
+09/08/2018;Feria de las flores;NO
+10/08/2018;Feria de las flores;NO
+11/08/2018;Feria de las flores;NO
+12/08/2018;Feria de las flores ;NO
+08/10/2018;Receso escolar;NO
+09/10/2018;Receso escolar;NO
+10/10/2018;Receso escolar;NO
+11/10/2018;Receso escolar;NO
+12/10/2018;Receso escolar;NO
+13/10/2018;Receso escolar;NO
+14/10/2018;Receso escolar;NO
+15/10/2018;Receso escolar;SI
+31/10/2018;Halloween;NO
+01/12/2018;Alborada;NO
+07/12/2018;Día de la virgen;NO
+08/12/2018;Día de la virgen;SI
+24/12/2018;Navidad;NO
+25/12/2018;Navidad;SI
+31/12/2018;Fin de año;NO
+01/01/2019;Año nuevo;SI
+07/01/2019;Reyes;SI
+08/03/2019;Día de la mujer;NO
+19/03/2019;Día del hombre;NO
+18/04/2019;Jueves Santo;SI
+19/04/2019;Viernes Santo;SI
+27/04/2019;Día del niño;NO
+01/05/2019;Día del trabajo;SI
+12/05/2019;Día de la madre;NO
+16/06/2019;Día del padre;NO
+20/07/2019;Día de la independencia;SI
+02/08/2019;Feria de las flores;NO
+03/08/2019;Feria de las flores;NO
+04/08/2019;Feria de las flores;NO
+05/08/2019;Feria de las flores;NO
+06/08/2019;Feria de las flores;NO
+07/08/2019;Feria de las flores - Batalla de Boyacá;SI
+08/08/2019;Feria de las flores;NO
+09/08/2019;Feria de las flores;NO
+10/08/2019;Feria de las flores;NO
+11/08/2019;Feria de las flores ;NO
+08/10/2019;Receso escolar;NO
+09/10/2019;Receso escolar;NO
+10/10/2019;Receso escolar;NO
+11/10/2019;Receso escolar;NO
+12/10/2019;Receso escolar;NO
+13/10/2019;Receso escolar;NO
+14/10/2019;Receso escolar;SI
+31/10/2019;Halloween;NO
+01/12/2019;Alborada;NO
+07/12/2019;Día de la virgen;NO
+08/12/2019;Día de la virgen;SI
+24/12/2019;Navidad;NO
+25/12/2019;Navidad;SI
+31/12/2019;Fin de año;NO

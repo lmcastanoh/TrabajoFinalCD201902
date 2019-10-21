@@ -1,0 +1,733 @@
+---
+title: "Reporte de Accidentalidad en Medellín urbana"
+author: "Janick Reales, Luisa Rios, Maria Victoria Valencia, Leidy Milena Castaño, Gustavo Andrés Gómez "
+date: "20/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r include=FALSE}
+library(tidyverse)
+library(shinydashboard)
+library(shiny)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(leaflet)
+library(leaflet.extras)
+library(htmltools)
+library(flexdashboard)
+library(RColorBrewer)
+library(kableExtra)
+```
+
+
+### INTRODUCCIÓN
+
+La información reportada por la Secretaría de movilidad de la ciudad de Medellín permite evidenciar con claridad las diferentes vías de los barrios y comunas que presentan oportunidades para la mejora en la movilidad; esto permite a su vez, tomar acciones sobre los índices de mayor accidentalidad que se presentan y de esta manera dar cumplimiento al objetivo propuesto por parte de esta entidad de identificar las causas de gravedad en la accidentalidad que permitan proponer, evaluar e implementar estrategias que logren una reducción en la cantidad de muertes causadas por accidentes de tránsito.
+
+Los avances en la movilidad vial van de la mano con el crecimiento de la población, y las estrategias necesarias para innovar en desarrollo tecnológico y diferentes herramientas analíticas, que permitan anticiparse a las oportunidades de mejora y apuntar a la reducción de la accidentalidad en la ciudad, así mismo, presenta un reto especialmente para dar cobertura en las fechas importantes donde la ciudad cuenta con eventos nacionales e internacionales teniendo los corredores viales requeridos para dar respuesta a esta demanda, evitando así el incremento de los accidentes de tránsito que de acuerdo a su tipo de gravedad indicarían las alertas que se deberán tener, las zonas de ocurrencia y finalmente, el análisis en el tiempo de la información para la toma de decisiones que impacten positivamente los resultados de la movilidad en la ciudad. 
+
+* **Zona urbana:**
+Las zonas en las que se divide la zona urbana de la ciudad de Medellín y sus respectivas comunas son:
+
+    * *Zona Nororiental:* Comuna 1 - Popular, Comuna 2 - Santa Cruz, Comuna 3- Manrique,  Comuna 4 - Aranjuez.
+
+### OBJETIVOS
+**Objetivo general:**
+
+Dar a conocer el comportamiento de la accidentalidad en la ciudad de Medellín.
+
+**Objetivos específicos:**
+
+* Analizar el comportamiento de la accidentalidad en la ciudad de Medellín durante los periodos enero de 2014 y diciembre de 2018.
+* Identificar clases de accidente, gravedad y días de mayor accidentalidad. 
+* Caracterizar el comportamiento de los accidentes con indicadores en cada una de las comunas y barrios de Medellín. 
+* Generar una aplicación web que permita enseñar a la secretaría de movilidad de Medellín sobre la accidentalidad en la ciudad.
+* Identificar puntos críticos de accidentalidad dentro de cada comuna y barrio.
+
+### METODOLOGÍA DE ANÁLISIS
+
+En el análisis de los datos se consideran las siguientes características:
+
+**Definición de variables:**
+
+* FECHA_CORREGIDA: corresponde al formato de fecha definido como día/mes/año de los accidentes registrados.
+
+* ID: Identificador único de cada uno de los registros de la base de datos.
+
+* LATITUD Y LONGITUD: coordenadas de los accidentes de la base de datos de movilidad de Medellín.
+
+* HORA: Corresponde a la hora de ocurrencia del accidente.
+
+* DIA_NOMBRE: nombre del día de la semana, correspondiente a la fecha de ocurrencia del accidente.
+
+* PERÍODO: Corresponde al año de ocurrencia del accidente.
+
+* CLASE: indica el tipo de accidente: choque, atropello, caída ocupante, incendio, volcamiento.
+
+* DIRECCIÓN: corresponde a la ubicación geoespacial de ocurrencia del accidente.
+
+* TIPO_GEOCOD: Característica particular de la vía donde se presentó el accidente.
+
+* GRAVEDAD: Indica las consecuencias del accidente: herido, muerto, solo daños.
+
+
+* DISEÑO: Diseño de la malla vial donde ocurrió el accidente.
+* MES: tiempo de ocurrencia del accidente, mes del año, de acuerdo a los períodos registrados.
+
+* DÍA: tiempo de ocurrencia del accidente, día de la semana, de acuerdo a las fechas registradas.
+
+* MES_NOMBRE: corresponde al cambio del mes de formato numérico a texto, donde ocurrieron los accidentes.
+
+* BARRIO: Sitio de la ciudad de Medellín donde ocurrieron los accidentes registrados.
+
+* COMUNA: subdivisión administrativa donde se encuentran contenidos los barrios de una ciudad, y donde ocurrieron los accidentes registrados.
+
+* COD_COMUNA_V2: corresponde a la numeración definida para la subdivisión administrativa donde ocurrieron los accidentes registrados.
+
+* N_DIA_LABORAL: descripción de los días dela semana que corresponden a día laboral.
+
+* Fechas.importantes: corresponde a las fechas de eventos en la ciudad de Medellín definidas anualmente.
+
+* Festivo: días en el calendario que pertenecen a festividades con ocurrencia de accidentes.
+
+* TIPO_HORA: Característica definida al tipo de hora para la movilidad en la ciudad.
+
+
+**Período de análisis:**
+
+En el siguiente informe se presenta el análisis de  la accidentalidad en la zona urbana del municipio de Medellín en el periodo temporal comprendido entre el 01 de enero de 2014 y el 31 diciembre de 2018. Particularmente, se busca encontrar tendencias a nivel general y  patrones o comportamientos diferenciales de accidentalidad dentro de cada una de las comunas y barrios de la ciudad.
+
+Los datos analizados fueron inicialmente extraídos de cada una de las    [bases de datos](https://geomedellin-m-medellin.opendata.arcgis.com/search?tags=movilidad) de accidentes de tránsito registrados por la Secretaría de Movilidad de la Alcaldía de Medellín, tratados y finalmente analizados en [R](https://www.r-project.org/). Debe tenerse en cuenta que la bases de datos originales tiene disponibles registros desde el 01 de enero de 2014 hasta el 30 de junio de 2019, donde se incluyen tanto comunas como corregimientos y barrios; sin embargo, no se tendrá dentro del análisis el período de 01 de enero a 30 de junio de 2019, ya que se busca realizar comparativos entre los diferentes años y obtener información detallada que sirva a los entes encargados para la  toma de decisiones.
+
+### ANÁLISIS GENERAL
+
+En el siguiente informe se presenta el análisis de  la accidentalidad en la zona urbana del municipio de Medellín en el periodo temporal comprendido entre el 01 de enero de 2014 y el 31 diciembre de 2018. Particularmente, se busca encontrar tendencias a nivel general y  patrones o comportamientos diferenciales de accidentalidad dentro de cada una de las comunas y barrios.
+
+Los datos analizados fueron inicialmente extraídos de cada una de las [bases de datos](https://geomedellin-m-medellin.opendata.arcgis.com/search?tags=movilidad) de accidentes de tránsito registrados por la Secretaría de Movilidad de la Alcaldía de Medellín, tratados y finalmente analizados en [R](https://www.r-project.org/). Debe tenerse en cuenta que la bases de datos originales tiene disponibles registros desde el 01 de enero de 2014 hasta el 30 de junio de 2019, donde se incluyen tanto comunas como corregimientos.
+
+
+
+
+```{r echo=FALSE}
+accidentalidad <- read.csv("accidentalidad_enriquecida2.csv", header=TRUE, sep=",", stringsAsFactors = FALSE)
+
+levels(accidentalidad$CLASE) <- c("", "Atropello", "Caida ocupante", "Choque",
+                                  "Incendio", "Otro", "Volcamiento")
+
+
+```
+
+```{r include=FALSE}
+data2<-read.csv("accidentalidad_enriquecida2.csv",sep=",", dec=".", stringsAsFactors = FALSE)
+data2<-subset(data2,subset = (PERIODO != 2019))
+
+```
+
+```{r echo=FALSE}
+# Base de datos de interés, comunas y periodo
+accidentalidad_1 <- subset(accidentalidad, subset=(COD_COMUNA_V2 %in% c(1:16) & PERIODO != 2019))
+
+accidentalidad_1$CLASE <- as.factor(accidentalidad_1$CLASE)
+
+levels(accidentalidad_1$CLASE) <- c("", "Atropello", "Caida ocupante", "Choque",
+                                  "Incendio", "Otro", "Volcamiento")
+
+
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#install.packages("tidiyverse")
+#install.packages("kableExtra")
+library(kableExtra)
+library(tidyverse)
+
+#cont_acc_anno <- aggregate(ID~PERIODO, data=accidentalidad_1, FUN=length)
+#cont_anno_mes <- aggregate(ID~MES*PERIODO, data=accidentalidad_1, FUN=length)
+
+#conso_anno_mes <- merge(cont_anno_mes, cont_acc_anno, by.x="PERIODO", by.y="PERIODO", all.x=TRUE)
+
+#orden <- sort(cont_anno_mes$PERIODO, decreasing=FALSE, index.return=TRUE)
+
+
+consolidado <- table(accidentalidad_1$PERIODO, accidentalidad_1$MES)
+
+
+```
+
+La primera parte del análisis consiste en identificar tendencias a nivel general del comportamiento de la accidentalidad en Medellín a través del tiempo, con lo cual podemos hallar una directriz que nos permita enfocar el estudio en comprender qué factores influyen sobre la accidentalidad en la ciudad para una época específica del año y por qué. 
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", fig.width = 9,fig.height=6}
+
+color_image <- hsv(h = 1, s = seq(0, 1, length.out = 5), v = 1, alpha = 0.8) # Escala de color
+
+image(t(consolidado[5:1, ]), xaxt='n', yaxt='n')
+axis(1, at=seq(0,1, by=1/11), labels=c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembe", "Octubre", "Noviembre", "Diciembre"),  las=2, cex.axis = 0.7)
+axis(2, at=seq(0,1, by=1/4), labels=c(2018,2017,2016,2015,2014), las=1, cex.axis = 0.7)
+title(main = "Cantidad de accidentes según año y mes", font.main = 1)
+
+e <- expand.grid(seq(0,1, length = 12), seq(1,0, length = 5))
+text(e, labels = paste(t(consolidado)), cex = 0.7)
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align="center"}
+
+
+completa_gravedad1 <- data2 %>%
+    select(FECHA_CORREGIDA,BARRIO,GRAVEDAD)%>%
+    group_by(FECHA_CORREGIDA,BARRIO,GRAVEDAD)%>%
+    summarise(CONTEO=length(FECHA_CORREGIDA))
+
+completa_barrio1 <- completa_gravedad1 %>%
+    select(FECHA_CORREGIDA,BARRIO, CONTEO)%>%
+    group_by(FECHA_CORREGIDA,BARRIO)%>%
+    summarise(TOTAL=sum(CONTEO))
+
+completa_barrio1$FECHA_CORREGIDA <- as.Date(( completa_barrio1$FECHA_CORREGIDA),"%Y-%m-%d")
+completa_barrio1$FECHA_CORREGIDA <- format(as.Date(completa_barrio1$FECHA_CORREGIDA),"%Y-%m")
+
+data_agrupada <- 
+    group_by(completa_barrio1,FECHA_CORREGIDA) %>% 
+    summarise(SUMA=sum(TOTAL))
+
+grafico_TS <- plot_ly(
+            type = "scatter",  data_agrupada,
+            x = ~data_agrupada$FECHA_CORREGIDA,
+            y = ~data_agrupada$SUMA,
+            name = "Accidentalidad en Medellin",
+            mode = "lines+markers",
+            line = list(
+                color = '#FC4E07'
+            )) %>%
+            
+            layout(
+                title = "Serie de tiempo de accidentalidad en Medellin",
+                yaxis=list(title="Cantidad"),
+                xaxis=list(title=""))
+
+grafico_TS
+```
+
+De acuerdo con las *Figuras 1 y 2* no se reconoce una variación significativa en la cantidad de accidentes por año y mes en Medellín, para el período de tiempo comprendido en este análisis. Donde, en promedio, la menor cantidad de accidentes se registra durante el mes de *enero* y la mayor accidentalidad ocurre en el mes de *agosto*. Cabe destacar que el *agosto* la ciudad se encuentra festejando la *Feria de las flores*, un evento durante el cual la cantidad de personas, nacionales y extranjeras, que llegan a Medellín es mayor que en otros meses, como *diciembre* y *enero*, donde muchas personas suelen retornar a sus lugares de origen, y por tanto, se espera que la población disminuya considerablemente, siendo lo anterior un posible indicio para que en la ciudad exista una menor congestión de las vías, y por por tanto una menor accidentalidad. No debe asumirse que son las causas de incremento o disminución de la accidentalidad, simplemente, factores que pueden ser tenidos en cuenta en futuros análisis,
+
+**PROMEDIO DE ACCIDENTES EN FECHAS ESPECIALES**
+
+Teniendo en cuenta lo anterior, adicional a la información registrada por la Secretaría de movilidad de Medellín se importa al análisis información referente a las festividades en la ciudad y así poder identificar cuáles son esas fechas especiales que más impacto tienen en la accidentalidad.
+
+```{r}
+completa_conteo_accidentes_f_impo <- data2 %>%
+    select(Fechas.importantes)%>%
+    group_by(Fechas.importantes)%>%
+    summarise(CONTEO=length(Fechas.importantes))
+
+completa_conteo_accidentes_f_impo<-na.omit(completa_conteo_accidentes_f_impo)
+
+completa_conteo_accidentes_f_impo<-completa_conteo_accidentes_f_impo[order(-completa_conteo_accidentes_f_impo$CONTEO),]
+
+completa_conteo_accidentes_f_impo<-head(completa_conteo_accidentes_f_impo,10)
+
+completa_conteo_accidentes_f_impo<-completa_conteo_accidentes_f_impo[order(completa_conteo_accidentes_f_impo$CONTEO),]
+
+qp <- plot_ly(completa_conteo_accidentes_f_impo, x = ~CONTEO, y=~Fechas.importantes, type = "bar") %>% 
+             layout(xaxis=list(title=""),yaxis = list(title = "", 
+                             categoryorder="array",
+                             categoryarray = ~Fechas.importantes),xaxis=list(range=c(0,5900)))
+
+qp
+```
+Se logra identificar que las fechas con mayor accidentalidad en la ciudad corresponden a las que abarcan la *Feria de las flores* y el receso estudiantil de *octubre* con valores de 5.726 y 4.249 accidentes respectivamente.
+
+**PROMEDIO DE ACCIDENTES POR TIPO DE DÍA**
+
+Otro insumo que también puede ser importante para la toma de acciones preventivas en materia de accidentalidad vehicular es el análisis por tipo de día, donde con tipo de día se hace referencia a *días laborales*, *fin de semana* y *festivos*. En los promedios analizados como se muestra en el gráfico, es posible visualizar que en promedio el mayor número de accidentes presentados dentro del período de estudio corresponden a los *días laborales* (entre 120 y 127 accidentes por día), seguido por los *fines de semana* (entre 92 y 98 accidentes por día) y por último los *días festivos* (entre 76 y 84 accidentes por día).
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+
+N_MAESTRO_FECHAS<-read.csv("N_MAESTRO_FECHAS.csv",sep=",")
+
+completa_conteo_accidentes <- data2 %>%
+    select(PERIODO,N_DIA_LABORAL)%>%
+    group_by(PERIODO,N_DIA_LABORAL)%>%
+    summarise(CONTEO=length(PERIODO))
+
+N_MAESTRO_FECHAS$PERIODO <- as.character(N_MAESTRO_FECHAS$N_FECHAS)
+N_MAESTRO_FECHAS$PERIODO <-substr(N_MAESTRO_FECHAS$PERIODO,1,4)
+N_MAESTRO_FECHAS$PERIODO <-as.numeric(N_MAESTRO_FECHAS$PERIODO)
+
+completa_conteo_tipo_dia <- N_MAESTRO_FECHAS %>%
+    select(PERIODO,N_DIA_LABORAL)%>%
+    group_by(PERIODO,N_DIA_LABORAL)%>%
+    summarise(CONTEO=length(PERIODO))
+
+completa_promedio_acc_tipo_dia <- left_join(completa_conteo_accidentes,completa_conteo_tipo_dia,by=c("PERIODO","N_DIA_LABORAL"))
+
+completa_promedio_acc_tipo_dia$promedio_acc_dia <- completa_promedio_acc_tipo_dia$CONTEO.x/completa_promedio_acc_tipo_dia$CONTEO.y
+
+
+pq <- plot_ly(completa_promedio_acc_tipo_dia, x = ~PERIODO, y=~promedio_acc_dia, color = ~N_DIA_LABORAL, type = "bar") %>% layout(title="",xaxis=list(title="Periodo"),yaxis=list(title="Promedio de accidentes por día"))
+
+pq
+
+
+```
+
+En la siguiente parte del análisis se enfoca en determinar cuál clase de accidente presenta mayor relevancia y qué tipo de gravedad sobresale para cada una de las clases de accidente medidas y reportadas en la base de datos de la secretaría de movilidad. La *Figura 2* muestra que los *choques* representan más de la mitad de las ocurrencias de accidentes en la ciudad de Medellín, los cuales resultan en gran medida en *solo daños*, seguidos de accidentes en donde los sujetos presentaron lesiones y una menor cantidad de ocurrencias se encuentran los accidentes con *muertes*.
+
+Con respecto a los atropellos y los choques se evidencia que son agravantes que representan en su mayoría las causas por las cuales una persona puede fallecer al momento de tener un accidente de tránsito.
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+q <- table(accidentalidad_1$GRAVEDAD, accidentalidad_1$CLASE)
+w <- as.matrix.data.frame(q)
+w <- w[, -1]
+colnames(w) <- c("Atropello", "Caida de Ocupante", "Choque", "Incendio", "Otro", "Volcamiento")
+rownames(w) <- c("Herido", "Muerto", "Solo daños")
+
+
+heridos <- as.vector(w[1,])
+muertos <- as.vector(w[2,])
+solo_danos <- as.vector(w[3,])
+clases <- colnames(w)
+
+data <- data.frame(clases, heridos, muertos, solo_danos)
+
+
+```
+
+
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+# GRÁFICO DE BARRAS -> CLASE DE ACCIDENTE VS GRAVEDAD DE ACCIDENTE
+
+p <- div(plot_ly(data, x = ~ data$clases, y = ~data$solo_danos, type = 'bar', name = 'Solo daños') %>%
+     add_trace(y = ~data$heridos, name = 'Herido') %>%
+     add_trace(y = ~data$muertos, name = 'Muerto')%>%
+     layout(title = "Cantidad de accidentes según gravedad y clase", yaxis = list(title = 'Cantidad de accidentes'),
+            xaxis = list(title = 'Clase de accidente'), barmode = 'stack') %>%
+    layout(colorway = c('#76D7C4','#F4D03F','#E74C3C')), align = "center")
+
+p
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align="center", fig.width = 9,fig.height=6}
+
+completa_gravedad1 <- data2 %>%
+    select(FECHA_CORREGIDA,BARRIO,GRAVEDAD)%>%
+    group_by(FECHA_CORREGIDA,BARRIO,GRAVEDAD)%>%
+    summarise(CONTEO=length(FECHA_CORREGIDA))
+
+completa_barrio1 <- completa_gravedad1 %>%
+    select(FECHA_CORREGIDA,BARRIO, CONTEO)%>%
+    group_by(FECHA_CORREGIDA,BARRIO)%>%
+    summarise(TOTAL=sum(CONTEO))
+
+completa_barrio1$FECHA_CORREGIDA <- as.Date(( completa_barrio1$FECHA_CORREGIDA),"%Y-%m-%d")
+completa_barrio1$FECHA_CORREGIDA <- format(as.Date(completa_barrio1$FECHA_CORREGIDA),"%Y-%m")
+
+
+
+
+data_agrupada <- 
+    group_by(completa_barrio1,FECHA_CORREGIDA) %>% 
+    summarise(SUMA=sum(TOTAL))
+
+
+data_clasacc <- data2 %>%
+    select(CLASE) %>% 
+    group_by(CLASE)%>%
+    summarise(TOTAL=length(CLASE))
+
+a <- sum(data_clasacc$TOTAL)
+
+result <- cbind(data_clasacc, a)
+
+result$PORCENTAJE <- result$TOTAL/result$a * 100
+result <- arrange(result, desc(result$PORCENTAJE))
+
+result$CLASE <- factor(result$CLASE, levels = c("","INCENDIO", "VOLCAMIENTO","CAIDA DE OCUPANTE", "ATROPELLO", "OTRO","CHOQUE"))
+result$PORCENTAJE<-round(result$PORCENTAJE,1)
+
+counts <- plot_ly (result, x = ~PORCENTAJE, y = ~CLASE, type = 'bar', 
+                       orientation = 'h',
+                       text=paste(as.character(result$PORCENTAJE),"%"),
+                       textposition = 'outside') %>% 
+        layout(xaxis=list(title="Porcentaje de clase de accidentes",range=c(0,76)), 
+               yaxis=list(title="Clase de accidente"))
+
+counts
+```
+
+El 68% del total de accidentes analizados corresponde a choques de vehículos, representando la causa de mayor accidentalidad en la ciudad, con respecto a las demás clases de accidente evaluadas como son: atropello, caída ocupante, volcamiento, incendio y otro.
+
+Si bien en la Figura 2 no sobresalen los accidentes en los que se presentaron muertes, por la diferencia tan notoria al ser comparado con los demás tipos de gravedad, es importante analizar esta variable de forma independiente y cómo ha evolucionado a través del tiempo. Cabe resaltar la importancia de este tipo de gravedad de accidente, ya que uno de los objetivos de secretaría de movilidad de Medellín es identificar causas agravantes de accidentalidad que permita proponer, evaluar e implementar estrategias que logren una reducción en la cantidad de muertes causadas por accidentes de tránsito
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+
+library(plotly)
+# CANTIDAD DE MUERTES POR AÑO
+muertes <- subset(accidentalidad_1, subset=(GRAVEDAD == "Muerto"))
+conteo_muertes <- aggregate(ID~MES*PERIODO, data=muertes, FUN=length)
+
+
+xm <- c("Enero", "Febrero", "Marzo", 
+                 "Abril", "Mayo", "Junio", "Julio",
+                 "Agosto", "Septiembre", "Octubre",
+                 "Noviembre", "Diciembre")
+ym1 <- conteo_muertes$ID[1:12]   # Conteo muertes 2014
+ym2 <- conteo_muertes$ID[13:24]  # Conteo muertes 2015
+ym3 <- conteo_muertes$ID[25:36]  # Conteo muertes 2016
+ym4 <- conteo_muertes$ID[37:48]  # Conteo muertes 2017
+ym5 <- conteo_muertes$ID[49:60]  # Conteo muertes 2018
+
+data <- data.frame(xm, ym1, ym2, ym3, ym4, ym5)
+data$xm <- factor(data$xm, levels = data[["xm"]]) # Para que plotly no nos ordene por letra inicial
+
+p2 <- div(plot_ly(data, x=~xm, y=~ym1, name = "2014", type = 'scatter', mode = 'lines+markers') %>%
+     add_trace(y = ~ym2, name = '2015') %>%
+     add_trace(y = ~ym3, name = '2016') %>%
+     add_trace(y = ~ym4, name = '2017') %>%
+     add_trace(y = ~ym5, name = '2018') %>%
+    layout(title = "Cantidad muertes en accidentes de tránsito según año y mes",
+                 xaxis = list(title = "Mes"),
+                 yaxis = list (title = "Cantidad de muertos"))%>%
+    layout(colorway = c('#1F618D', '#148F77', '#2E4053', '#2ECC71', '#5DADE2')),
+    align = "center")
+
+p2
+
+```
+
+
+Con respecto al gráfico anterior *Figura 3* se resaltan los siguientes aspectos:
+
+* El año 2014 presentó durante cuatro meses consecutivos crecimiento en la cantidad de muertos, desde mayo hasta agosto.
+
+* El mes de agosto del año 2015 exhibe la mayor cantidad de accidentes que causaron muertos al comparar este mismo mes con los otros años. 
+
+* El año con mayor cantidad de muertos por accidente de tránsito en los primeros meses del año, es el año 2018. Particularmente, el comportamiento mensual de la cantidad de muertos registrados en este año se diferencia notoriamente de los demás años en estudio.
+
+* En el mes de diciembre los años 2014 y 2016 tuvieron reducción en la cantidad de muertos con respecto al mes de noviembre, mientras que en los demás años en este mismo mes aumentó, siendo el año 2018 con mayor accidentalidad con muertos en el mes de diciembre.
+
+### ANÁLISIS POR COMUNA
+
+Aproximadamente el 97%  de la población ocupante de la ciudad de Medellín se encuentra en la zona urbana y el 3% restante se encuentra en la zona rural según el [Censo 2018](https://sitios.dane.gov.co/cnpv/#!/donde_estamos). En la zona rural se encuentran los corregimientos(5) mientras que en la zona urbana las comunas(16), éstas a su vez están agrupadas dentro de zonas(6) de acuerdo a la ubicación en la ciudad.
+
+
+* **Zona urbana:**
+Las zonas en las que se divide la zona urbana de la ciudad de Medellín y sus respectivas comunas son:
+
+    * *Zona Nororiental:* Comuna 1 - Popular, Comuna 2 - Santa Cruz, Comuna 3- Manrique,  Comuna 4 - Aranjuez.
+
+    * *Zona Noroccidental:* Comuna 5 - Castilla, Comuna 6 - Doce de octubre, Comuna 7 - Robledo.
+
+    * *Zona Centro oriental:* Comuna 8 - Villa Hermosa, Comuna 9 - Doce de octubre, Comuna 10 - La Candelaria.
+
+    * *Zona Centro occidental:* Comuna 11 - Laureles-Estadio, Comuna 12 - La América, Comuna 13 - San Javier.
+
+    * *Zona Suroriental:* Comuna 14 - El Poblado.
+
+    * *Zona Suroccidental:* Comuna 15 - Guayabal, Comuna 16 - Belén.
+
+
+*  **Zona rural:** 
+Los corregimientos que conforman la zona rural de la ciudad de Medellín son:
+
+    1. San Sebastián de Palmitas.
+    
+    2. San Cristóbal.
+    
+    3. Altavista.
+    
+    4. San Antonio de Prado.
+    
+    5. Santa Elena.
+
+
+Para efecto del análisis sólo se consideraron los accidentes ocurridos en las comunas de Medellín.
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE}
+# Conteo de accidentes totales por comuna
+contAcc_comuna <- aggregate(ID ~ COMUNA_V2, data = accidentalidad_1, FUN = length)
+total <- length(accidentalidad_1$PERIODO)
+
+# Proporción de accidentes por comuna
+contAcc_comuna$value <- round((contAcc_comuna$ID/total)*100,2)
+ordenado <- sort(contAcc_comuna$value, decreasing = TRUE, index.return = TRUE)
+contAcc_comuna$value <- sort(contAcc_comuna$value, decreasing = TRUE, index.return=FALSE)
+contAcc_comuna$COMUNA_V2 <- contAcc_comuna$COMUNA_V2[ordenado$ix]
+
+```
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+require(shiny)
+x <- contAcc_comuna$COMUNA_V2
+y <- contAcc_comuna$value
+data <- data.frame(x,y)
+data$x <- factor(data$x, levels = data[["x"]])
+
+p4 <- div(plot_ly(data, x = ~x, y = ~y, type = 'bar') %>%
+     layout(title = "Porcentaje de accidentalidad por Comuna", yaxis = list(title = 'Porcentaje de accidentalidad', ylim(0, max(y) +5)),
+            xaxis = list(title = 'Comuna'), barmode = 'stack') %>%
+    layout(colorway = c('#85C1E9')), align = "center") 
+
+#text(p, contAcc_comuna$value+3, paste(format(contAcc_comuna$value), "%"), cex=0.7)
+p4
+
+```
+
+
+Al observar la distribución en porcentajes de los accidentes por comuna en la *Figura 4*, se obtuvo que las cinco primeras comunas que representan mayor proporción de accidentes son: 
+
+* Comuna 10. La candelaria
+
+* Comuna 11. Laureles-Estadio
+
+* Comuna 5. Castilla
+
+* Comuna 14. El Poblado
+
+* Comuna 15. Guayabal
+
+
+
+
+
+```{r echo =FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+
+#Clase de accidentes por comuna, se excluyen accidentes con clase de Incendio por baja frecuencia
+
+clases_acc_comuna1 <- table(accidentalidad_1$CLASE, accidentalidad_1$COD_COMUNA_V2)
+clases_acc_comuna2 <- as.matrix.data.frame(clases_acc_comuna1)
+clases_acc_comuna2 <- clases_acc_comuna2[-c(1,5),] # Elimina las filas de la matriz correspondiente a peridos  e Incendios 
+
+
+# Total de accidentes por comuna, sumando los accidentes de las clases consideradas por comuna
+total_accidentes_comuna <- apply(clases_acc_comuna2, 2 ,sum)
+
+
+atropellos <- as.vector(clases_acc_comuna2[1,])
+caidas <- as.vector(clases_acc_comuna2[2,])
+choques <- as.vector(clases_acc_comuna2[3,])
+otros <- as.vector(clases_acc_comuna2[4,])
+volcamiento <- as.vector(clases_acc_comuna2[5,])
+
+nombre_comunas <- c("Popular", "Santa Cruz", "Manrique", "Aranjuez", "Castilla", "Doce de Octubre", "Robledo", "Villa Hermosa", "Buenos Aires", "La Candelaria", "Laureles Estadio", "La América", "San Javier", "El Poblado", "Guayabal","Belén")
+
+tabla_todas <- data.frame("COMUNA"=nombre_comunas, "ATROPELLOS" = atropellos, 
+                     "CAIDAS" = caidas, "CHOQUES" = choques, "OTROS" = otros, 
+                     "VOLCAMIENTO" = volcamiento, "TOTAL_COMUNA" = total_accidentes_comuna)
+
+tabla_todas$P_ATROPELLOS <- round((tabla_todas$ATROPELLOS/total_accidentes_comuna)*100,2)
+tabla_todas$P_CAIDAS <- round((tabla_todas$CAIDAS/total_accidentes_comuna)*100,2)
+tabla_todas$P_CHOQUES <- round((tabla_todas$CHOQUES/total_accidentes_comuna)*100,2)
+tabla_todas$P_OTROS <- round((tabla_todas$OTROS/total_accidentes_comuna)*100,2)
+tabla_todas$P_VOLCAMIENTO <- round((tabla_todas$VOLCAMIENTO/total_accidentes_comuna)*100,2)
+
+
+```
+
+
+
+```{r echo =FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+
+# Este no..
+# tabla_todas$COMUNA <- factor(tabla_todas$COMUNA, levels = tabla_todas[["COMUNA"]])
+# 
+# 
+# p7 <- div(plot_ly(tabla_todas, x= ~tabla_todas$COMUNA, y= ~ tabla_todas$P_ATROPELLOS, name = "Atropello", type = 'scatter', mode = 'markers', marker = list(size = 8)) %>%
+#      add_trace(y = ~ tabla_todas$P_CAIDAS, name = "Caida de ocupante", marker = list(size = 8))%>%
+#      add_trace(y = ~ tabla_todas$P_CHOQUES, name = "Choques", marker = list(size = 8)) %>%
+#      add_trace(y = ~ tabla_todas$P_OTROS, name = "Otros", marker = list(size = 8)) %>%
+#      add_trace(y = ~ tabla_todas$P_VOLCAMIENTO, name = "Volcamiento", marker = list(size = 8)) %>%
+#     layout(title = "Porcentaje de accidentes por comuna y clase" ,
+#                  xaxis = list(title = "Comuna"),
+#                  yaxis = list (title = "Porcentaje de accidentes", ylim= c(0, 100)))%>%
+#     layout(colorway = c('#76D7C4', '#8E44AD', '#154360', '#C39BD3', '#FF5722')),
+#     align = "center")
+# 
+# p7
+```
+
+
+```{r echo =FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+
+tabla_todas$COMUNA <- factor(tabla_todas$COMUNA, levels = tabla_todas[["COMUNA"]])
+
+
+p7 <- div(plot_ly(tabla_todas, x= ~tabla_todas$COMUNA, y= ~ tabla_todas$P_ATROPELLOS, name = "Atropello", type = 'scatter', mode = 'lines + markers') %>%
+     add_trace(y = ~ tabla_todas$P_CAIDAS, name = "Caida de ocupante")%>%
+     add_trace(y = ~ tabla_todas$P_CHOQUES, name = "Choques") %>%
+     add_trace(y = ~ tabla_todas$P_OTROS, name = "Otros") %>%
+     add_trace(y = ~ tabla_todas$P_VOLCAMIENTO, name = "Volcamiento") %>%
+    layout(title = "Porcentaje de accidentes por comuna y clase" ,
+                 xaxis = list(title = "Comuna"),
+                 yaxis = list (title = "Porcentaje de accidentes", ylim= c(0, 100)))%>%
+    layout(colorway = c('#76D7C4', '#8E44AD', '#154360', '#C39BD3', '#FF5722')),
+    align = "center")
+
+p7
+```
+
+
+Con respecto a la distribución porcentual de la clase de accidentes en cada una de las comunas, en la *Figura 5*, se observa la relevancia de cada una de las clases consideradas y de las cuáles se puede obtener:
+
+* Poblado, Laureles - Estadio y la Candelaria son las comunas dónde es más frecuente encontrar choques, si se compara al interior de cada una de ellas la proporción o porcentaje de accidentes ocurridos por choques con respecto a las demás clases.
+
+* Popular, Santa Cruz, Manrique, son comunas pertenecientes a la zona Nororiental de la ciudad y que obtuvieron mayor porcentaje de accidentalidad por atropellos. Debe mencionarse que las comunas en esta zona son densamente pobladas y están ubicadas en zonas periféricas de la ciudad.
+
+* En la mayoría de comunas, el porcentaje de accidentalidad causado por caída del ocupante o por otras razones no presentan una notoria variación al ser comparadas, sin embargo, en las comunas Doce de Octubre y San Javier se observa un leve incremento en esta clase de accidente con respecto al comportamiento de las demás comunas.
+
+* La comuna Castilla y Robledo, tienen menor porcentaje de accidentalidad por atropellos si al interior de ellas se compara el porcentaje de accidentes causados por caídas o por otros motivos.
+
+* Los volcamientos es una clase de accidente poco frecuentada en el interior de cada comuna, sin embargo Buenos Aires y San Javier tienen un leve incremento en este tipo de accidentes si se comparan con las demás comunas.
+
+* En este gráfico, fueron excluídos los accidentes ocurridos por Incendio dada a su mínima participación por total de accidentes y de manera consecuente al interior de cada comuna. También, tener en cuenta que las líneas utilizadas en este gráfico no asumen una continuidad entre comunas, sólo se utilizan para mejorar la visualización al ser comparadas por clase de accidente.
+
+
+A continuación se presenta un análisis suscinto de la gravedad según el tiempo en las primeras cinco comunas que representan en la ciudad de Medellín mayor porcentaje de accidentalidad.
+
+
+```{r echo =FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+
+# Sunconjuntos con las comunas de interés
+muertes_com <- subset(accidentalidad_1, subset=(GRAVEDAD == "Muerto" & COD_COMUNA_V2 %in% c(5,10,11,14,15)))
+heridos_com <- subset(accidentalidad_1, subset=(GRAVEDAD == "Herido" & COD_COMUNA_V2 %in% c(5,10,11,14,15)))
+dannos_com <- subset(accidentalidad_1, subset=(GRAVEDAD == "Solo daños" & COD_COMUNA_V2 %in% c(5,10,11,14,15)))
+
+
+# Conteos de gravedad de accidente por comuna
+cont_muertes <- aggregate(ID ~ COMUNA_V2, data = muertes_com, FUN=length) #Muertos
+cont_heridos <- aggregate(ID ~ COMUNA_V2, data = heridos_com, FUN=length) # Heridos
+cont_dannos <- aggregate(ID ~ COMUNA_V2, data = dannos_com, FUN=length) # Solo daños
+
+
+```
+
+```{r echo =FALSE, message=FALSE, warning=FALSE, fig.width = 14,fig.height=12}
+
+x1 <- c("Castilla", "El Poblado", "Guayabal", "La Candelaria", "Laureles - Estadio")
+y1 <- cont_dannos$ID
+y2 <- cont_heridos$ID
+y3 <- cont_muertes$ID
+
+data1 <- data.frame(x1,y1,y2,y3)
+
+p9 <- div(plot_ly(data1, x = ~data1$x1, y = ~data1$y1, type = 'bar', name = 'Solo daños') %>%
+     add_trace(y = ~data1$y2, name = 'Heridos') %>%
+     add_trace(y = ~data1$y3, name = 'Muertes')%>%
+     layout(title = "Gravedad de accidente por comunas", xaxis = list(title = 'Comuna'), 
+            yaxis = list(title = 'Conteo gravedad de accidente'), barmode = 'group') %>%
+    layout(colorway = c('#76D7C4','#F4D03F','#E74C3C')), align = "center")
+
+p9
+
+```
+
+
+La *Figura 6* muestra la importancia de tener en cuenta el tipo de gravedad en los accidentes de tránsito, pese a que en esta sólo se encuentran las cinco comunas con mayor porcentaje de accidentes respecto al total, se identifica que no todas convergen a una priodidad en gravedad de accidentes. Se observa en *la Candelaria* que al ser la comuna con la mayor tasa de accidentalidad predomina en los tres tipos de gravedad de accidentes registradas, en donde la variable de *solo daños* cuenta con un mayor número de ocurrencias, seguida de los accidentes donde hubo heridos y por último, accidentes que terminaron en muertes. Esta tendencia es similar en las comunas *el Poblado* y *Laureles Estadio*. Sin embargo, para la comuna de *Castilla* se presentó mayor número de accidentes con heridos, respecto a las otras comunas, y en *Guayabal* los conteos de accidentes con heridos y solo daños fueron similares. Con respecto al comportamiento de la cantidad de accidentes que generan muertes debe generarse una alerta en las comunas la Candelaria y Castilla para atender este tipo de casos. No obstante, se debe recordar que la Candelaria es la comuna dónde se encuentran las vías más importantes de la ciudad que comunican las diferentes zonas de la misma, y donde existe gran concentración de vehículos.
+
+
+### ANÁLISIS POR BARRIO
+
+Adicional al análisis por comuna, el usuario también podrá interactuar con información a nivel de barrio mediante filtros en la aplicación. 
+
+Debido a la gran cantidad de barrios registrados en la base de datos con la que se construyó la aplicación (306) y para una mejor visualización de los gráficos presentados se tendrá en cuenta un top 10 según la cantidad de accidentes registrados.
+
+**TOP 10 DE ACCIDENTES POR BARRIO**
+
+Dentro de los barrios analizados, se obtienen el top 10 de los barrios con mayor accidentalidad, los cuales se clasifican por la gravedad como solo daño, muerto y/o herido; identificando que los barrios La Candelaria y Castilla cuentan con el mayor número de accidentes solo por daño, con valores de 4429 y 2780 respectivamente. Al evaluar el número de heridos y muertos por la accidentalidad en el top 10 de barrios, se alcanza a observar que  Castilla ha presentado la mayor cantidad de heridos con 4070 y 49 muertos, mientras que La Candelaria presentó una cantidad de heridos de 3148 y 37 muertos.
+
+
+```{r}
+
+completa_gravedad <- data2 %>%
+    select(PERIODO, MES,BARRIO,GRAVEDAD)%>%
+    group_by(PERIODO, MES,BARRIO,GRAVEDAD)%>%
+    summarise(CONTEO=length(PERIODO))
+
+completa_barrio <- completa_gravedad %>%
+    select(PERIODO, MES,BARRIO, CONTEO)%>%
+    group_by(PERIODO, MES,BARRIO)%>%
+    summarise(TOTAL=sum(CONTEO))
+
+completa <- left_join(completa_gravedad,completa_barrio, 
+                      by = c("PERIODO", "BARRIO", "MES"))
+
+general<- completa[, c("BARRIO", "CONTEO")] %>%
+    select(BARRIO, CONTEO) %>%
+    group_by(BARRIO) %>%
+    summarise(TOTAL =sum(CONTEO))
+
+general_gravedad<-data2[,c("BARRIO", "GRAVEDAD")]%>%
+    select(BARRIO,GRAVEDAD)%>%
+    group_by(BARRIO, GRAVEDAD)%>%
+    summarise(CONTEO=length(BARRIO)) 
+
+ordenamiento<-general[order(-general$TOTAL),]
+ordenamiento<-head(ordenamiento,10)
+ordenamiento$BARRIO<-as.character(ordenamiento$BARRIO)
+
+general_g<-inner_join(general_gravedad,ordenamiento,by="BARRIO")
+general_g<-general_g[order(-general_g$TOTAL),]
+
+bar_barrio <- plot_ly(x = general_g$BARRIO, y = general_g$CONTEO, type = 'bar', 
+            name = general_g$GRAVEDAD ,color = general_g$GRAVEDAD) %>%
+            layout(yaxis = list(title = 'Cantidad'), 
+                   xaxis=list(categoryorder='array',
+                              categoryarray=general_g$TOTAL),
+                   barmode = 'stack',
+                   colorway = c('#4c3d66', '#7982ce', '#ff975b', 
+                                '#a262a9', '#6f4d96', '#3d3b72', '#182844')
+            )
+bar_barrio
+            
+```
+
+
+
+**MAPA DE ACCIDENTALIDAD**
+
+Con el mapa presentado y el uso de clusters busca darse al usuario una herramienta que facilite la identificación de zonas con alto nivel de accidentalidad.
+
+```{r}
+
+general_coord<- data2[,c("BARRIO","GRAVEDAD","LATITUD","LONGITUD","PERIODO")]
+
+general_coord$LATITUD<-as.numeric(general_coord$LATITUD)
+        general_coord$LONGITUD<-as.numeric(general_coord$LONGITUD)
+        lati<-general_coord$LATITUD
+        longi<-general_coord$LONGITUD
+        mapa<-leaflet()
+        mapa<-addProviderTiles(mapa,provider="OpenStreetMap.Mapnik")
+        mapa<-fitBounds(mapa,lng1 = min(longi),lng2 =max(longi) ,
+                        lat1 = min(lati),lat2 =max(lati) )
+        
+        mapa<-addMarkers(mapa,lat=lati,lng=longi,clusterOptions = markerClusterOptions())
+
+mapa
+
+```
+
+
+
+
+
+
+
+
+
